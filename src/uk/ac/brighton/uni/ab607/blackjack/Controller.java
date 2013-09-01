@@ -23,6 +23,10 @@ public class Controller {
         return instance;
     }
     
+    public void startNewGame() {
+        model.newGame();
+    }
+    
     public boolean playerPlaceBet(int bet) {
         return model.playerPlaceBet(bet);
     }
@@ -30,9 +34,11 @@ public class Controller {
     public void processAction(Action action) {
         switch(action) {
             case HIT:
+                model.playerHit();
                 break;
                 
             case STAND:
+                model.playerStand();
                 break;
         }
     }

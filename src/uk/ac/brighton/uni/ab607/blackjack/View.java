@@ -1,6 +1,8 @@
 package uk.ac.brighton.uni.ab607.blackjack;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -16,7 +18,7 @@ import uk.ac.brighton.uni.ab607.blackjack.Controller.Action;
 public class View extends DoubleBufferWindow implements Observer {
     
     enum DialogType {
-        ASK_BET, ASK_NAME, ASK_MOVE
+        ASK_BET, ASK_NAME, ASK_MOVE, SHOW_WIN, SHOW_LOSE, SHOW_NO_MONEY
     };
     
     /**
@@ -26,6 +28,8 @@ public class View extends DoubleBufferWindow implements Observer {
                              H = 720;
     
     private static final String WINDOW_TITLE = "Blackjack by Almas";
+    
+    private ArrayList<Card> cardsOnTable = new ArrayList<Card>();
 
     public View() {
         super(W, H, WINDOW_TITLE);
@@ -33,13 +37,23 @@ public class View extends DoubleBufferWindow implements Observer {
 
     @Override
     protected void renderPicture(Graphics2D g) {
-        // TODO Auto-generated method stub
+        g.setColor(Color.gray);
+        g.fillRect(0, 0, W, H);
         
+        int i = 0;
+        
+        g.setColor(Color.white);
+        for (Card card : cardsOnTable) {
+            g.drawString(card.toString(), 50, 100 + 50*i);
+            i++;
+        }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void update(Observable o, Object arg) {
         if (arg != null && arg instanceof DialogType) {
+            Controller controller = Controller.getInstance();
             DialogType modelCall = (DialogType) arg;
             switch(modelCall) {
                 case ASK_BET:
@@ -76,9 +90,30 @@ public class View extends DoubleBufferWindow implements Observer {
                     }
                     Controller.getInstance().processAction(options[n]);
                     break;
+                    
+                case SHOW_WIN:
+                    showMessage("You won!");
+                    controller.startNewGame();
+                    break;
+                    
+                case SHOW_LOSE:
+                    showMessage("You lost!");
+                    controller.startNewGame();
+                    break;
+                    
+                case SHOW_NO_MONEY:
+                    showMessage("You have no money. Game is over");
+                    System.exit(0);
+                    break;
+            }
+        }
+        else {
+            if (arg != null) {
+                cardsOnTable = (ArrayList<Card>) arg;
             }
         }
         
+        repaint();
     }
 
 }

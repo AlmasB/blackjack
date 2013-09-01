@@ -72,6 +72,7 @@ public abstract class DoubleBufferWindow extends JFrame {
                 }
             }
         });
+        setVisible(true);
     }
 
     /**

@@ -14,6 +14,10 @@ public class Deck {
     private Card[] cards = new Card[52];
     
     public Deck() {
+        refill();
+    }
+    
+    public final void refill() {
         int i = 0;
         for (Suit suit : Suit.values()) {
             for (Rank rank : Rank.values()) {
@@ -25,7 +29,9 @@ public class Deck {
     public Card drawCard() {
         Card card = null;
         while (card == null) {
-            card = cards[(int)(Math.random()*53)];
+            int index = (int)(Math.random()*53);
+            card = cards[index];
+            cards[index] = null;
         }
         return card;
     }

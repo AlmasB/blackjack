@@ -1,23 +1,29 @@
 package uk.ac.brighton.uni.ab607.blackjack;
 
+import java.util.Observable;
+
 import uk.ac.brighton.uni.ab607.blackjack.Card.Rank;
 
 /**
  * A typical player hand
  * 
- * Since players can't put cards back into the deck,
- * we really only care about the hand value,
- * not what cards it has
- * 
  * @author Almas
  * @version 1.0
  */
-public abstract class Hand {
+public abstract class Hand extends Observable {
 
+    private Deck deck;
     private int value = 0,
                 aces = 0;
     
-    public void takeCard(Card card) {
+    public Hand(Deck deck) {
+        this.deck = deck;
+    }
+    
+    public void takeCard() {
+        Card card = deck.drawCard();
+        updateObservers(card);
+        
         value += card.value;
         
         if (card.rank == Rank.ACE) {
@@ -25,12 +31,22 @@ public abstract class Hand {
         }
         
         if (value > 21 && aces > 0) {
-            value -= 10;    //count ace as '1' not '11'
+            value -= 10;    //then count ace as '1' not '11'
             aces--;
         }
     }
     
+    public void reset() {
+        value = 0;
+        aces = 0;
+    }
+    
     public int getValue() {
         return value;
+    }
+    
+    public void updateObservers(Object arg) {
+        setChanged();
+        notifyObservers(arg);
     }
 }
