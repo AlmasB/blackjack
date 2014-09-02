@@ -1,22 +1,22 @@
-package uk.ac.brighton.uni.ab607.blackjack;
+package com.almasb.blackjack;
 
-import uk.ac.brighton.uni.ab607.blackjack.Card.Rank;
-import uk.ac.brighton.uni.ab607.blackjack.Card.Suit;
+import com.almasb.blackjack.Card.Rank;
+import com.almasb.blackjack.Card.Suit;
 
 /**
  * Standard 52 card deck
- * 
+ *
  * @author Almas
  * @version 1.0
  */
 public class Deck {
 
     private Card[] cards = new Card[52];
-    
+
     public Deck() {
         refill();
     }
-    
+
     public final void refill() {
         int i = 0;
         for (Suit suit : Suit.values()) {
@@ -25,11 +25,11 @@ public class Deck {
             }
         }
     }
-    
+
     public Card drawCard() {
         Card card = null;
         while (card == null) {
-            int index = (int)(Math.random()*53);
+            int index = (int)(Math.random()*cards.length);
             card = cards[index];
             cards[index] = null;
         }
