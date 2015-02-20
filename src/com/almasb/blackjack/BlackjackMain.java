@@ -1,9 +1,11 @@
 package com.almasb.blackjack;
 
+import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -17,8 +19,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import com.almasb.java.ui.FXWindow;
-
 /**
  * Game's logic and UI
  *
@@ -26,7 +26,7 @@ import com.almasb.java.ui.FXWindow;
  * @version 1.0
  *
  */
-public class Game extends FXWindow {
+public class BlackjackMain extends Application {
 
     private Deck deck = new Deck();
     private Hand dealer = new Hand(), player = new Hand();
@@ -39,8 +39,8 @@ public class Game extends FXWindow {
     private HBox dealerCards = new HBox(20);
     private HBox playerCards = new HBox(20);
 
-    @Override
-    protected void createContent(Pane root) {
+    protected Parent createContent() {
+        Pane root = new Pane();
         root.setPrefSize(800, 600);
 
         Region background = new Region();
@@ -140,18 +140,8 @@ public class Game extends FXWindow {
 
             endGame();
         });
-    }
 
-    @Override
-    protected void initScene(Scene scene) {}
-
-    @Override
-    protected void initStage(Stage primaryStage) {
-        primaryStage.setWidth(800);
-        primaryStage.setHeight(600);
-        primaryStage.setResizable(false);
-        primaryStage.setTitle("BlackJack");
-        primaryStage.show();
+        return root;
     }
 
     private void startNewGame() {
@@ -193,5 +183,19 @@ public class Game extends FXWindow {
 
         message.setText(winner + " WON");
         btnPlay.setDisable(false);
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        primaryStage.setScene(new Scene(createContent()));
+        primaryStage.setWidth(800);
+        primaryStage.setHeight(600);
+        primaryStage.setResizable(false);
+        primaryStage.setTitle("BlackJack");
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }

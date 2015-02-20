@@ -35,28 +35,20 @@ public class Card extends Parent {
     public final Rank rank;
     public final int value;
 
-    /**
-     * Card's "image"
-     */
-    private Rectangle rect = new Rectangle(80, 100);
-
     public Card(Suit suit, Rank rank) {
         this.suit = suit;
         this.rank = rank;
         this.value = rank.value;
 
-        rect.setArcWidth(20);
-        rect.setArcHeight(20);
-        rect.setFill(Color.WHITE);
+        Rectangle bg = new Rectangle(80, 100);
+        bg.setArcWidth(20);
+        bg.setArcHeight(20);
+        bg.setFill(Color.WHITE);
 
         Text text = new Text(toString());
         text.setWrappingWidth(70);
 
-        StackPane stack = new StackPane();
-
-        stack.getChildren().addAll(rect, text);
-
-        getChildren().add(stack);
+        getChildren().add(new StackPane(bg, text));
     }
 
     @Override
