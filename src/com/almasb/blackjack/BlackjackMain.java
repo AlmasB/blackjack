@@ -50,19 +50,16 @@ public class BlackjackMain extends Application {
 
         HBox rootLayout = new HBox(5);
         rootLayout.setPadding(new Insets(5, 5, 5, 5));
-        Rectangle left = new Rectangle(550, 560);
-        left.setArcWidth(50);
-        left.setArcHeight(50);
-        left.setFill(Color.GREEN);
-        Rectangle right = new Rectangle(230, 560);
-        right.setArcWidth(50);
-        right.setArcHeight(50);
-        right.setFill(Color.ORANGE);
+        Rectangle leftBG = new Rectangle(550, 560);
+        leftBG.setArcWidth(50);
+        leftBG.setArcHeight(50);
+        leftBG.setFill(Color.GREEN);
+        Rectangle rightBG = new Rectangle(230, 560);
+        rightBG.setArcWidth(50);
+        rightBG.setArcHeight(50);
+        rightBG.setFill(Color.ORANGE);
 
         // LEFT
-
-        StackPane leftStack = new StackPane();
-
         VBox leftVBox = new VBox(50);
         leftVBox.setAlignment(Pos.TOP_CENTER);
 
@@ -70,11 +67,8 @@ public class BlackjackMain extends Application {
         Text playerScore = new Text("Player: ");
 
         leftVBox.getChildren().addAll(dealerScore, dealerCards, message, playerCards, playerScore);
-        leftStack.getChildren().addAll(left, leftVBox);
 
         // RIGHT
-
-        StackPane rightStack = new StackPane();
 
         VBox rightVBox = new VBox(20);
         rightVBox.setAlignment(Pos.CENTER);
@@ -88,17 +82,14 @@ public class BlackjackMain extends Application {
         Button btnHit = new Button("HIT");
         Button btnStand = new Button("STAND");
 
-        HBox buttonsHBox = new HBox(15);
+        HBox buttonsHBox = new HBox(15, btnHit, btnStand);
         buttonsHBox.setAlignment(Pos.CENTER);
-        btnHit.setDisable(true);
-        btnStand.setDisable(true);
-        buttonsHBox.getChildren().addAll(btnHit, btnStand);
+
         rightVBox.getChildren().addAll(bet, btnPlay, money, buttonsHBox);
-        rightStack.getChildren().addAll(right, rightVBox);
 
         // ADD BOTH STACKS TO ROOT LAYOUT
 
-        rootLayout.getChildren().addAll(leftStack, rightStack);
+        rootLayout.getChildren().addAll(new StackPane(leftBG, leftVBox), new StackPane(rightBG, rightVBox));
         root.getChildren().addAll(background, rootLayout);
 
         // BIND PROPERTIES
