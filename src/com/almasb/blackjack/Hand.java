@@ -1,8 +1,8 @@
 package com.almasb.blackjack;
 
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 
 import com.almasb.blackjack.Card.Rank;
 
@@ -14,10 +14,14 @@ import com.almasb.blackjack.Card.Rank;
  */
 public class Hand {
 
-    private ObservableList<Card> cards = FXCollections.observableArrayList();
+    private ObservableList<Node> cards;
     private SimpleIntegerProperty value = new SimpleIntegerProperty(0);
 
     private int aces = 0;
+
+    public Hand(ObservableList<Node> cards) {
+        this.cards = cards;
+    }
 
     public void takeCard(Card card) {
         cards.add(card);
@@ -43,9 +47,5 @@ public class Hand {
 
     public SimpleIntegerProperty valueProperty() {
         return value;
-    }
-
-    public ObservableList<Card> getCards() {
-        return cards;
     }
 }

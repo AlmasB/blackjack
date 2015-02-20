@@ -1,8 +1,8 @@
 package com.almasb.blackjack;
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -23,23 +23,24 @@ import javafx.stage.Stage;
  * Game's logic and UI
  *
  * @author Almas Baimagambetov (ab607@uni.brighton.ac.uk)
- * @version 1.0
+ * @version 1.1
  *
  */
 public class BlackjackMain extends Application {
 
     private Deck deck = new Deck();
-    private Hand dealer = new Hand(), player = new Hand();
+    private Hand dealer, player;
     private Text message = new Text();
 
-    private Button btnPlay = new Button("PLAY");
-    private Button btnHit = new Button("HIT");
-    private Button btnStand = new Button("STAND");
+    private SimpleBooleanProperty playable = new SimpleBooleanProperty(false);
 
     private HBox dealerCards = new HBox(20);
     private HBox playerCards = new HBox(20);
 
-    protected Parent createContent() {
+    private Parent createContent() {
+        dealer = new Hand(dealerCards.getChildren());
+        player = new Hand(playerCards.getChildren());
+
         Pane root = new Pane();
         root.setPrefSize(800, 600);
 
@@ -83,6 +84,10 @@ public class BlackjackMain extends Application {
         bet.setMaxWidth(50);
         Text money = new Text("MONEY");
 
+        Button btnPlay = new Button("PLAY");
+        Button btnHit = new Button("HIT");
+        Button btnStand = new Button("STAND");
+
         HBox buttonsHBox = new HBox(15);
         buttonsHBox.setAlignment(Pos.CENTER);
         btnHit.setDisable(true);
@@ -98,6 +103,10 @@ public class BlackjackMain extends Application {
 
         // BIND PROPERTIES
 
+        btnPlay.disableProperty().bind(playable);
+        btnHit.disableProperty().bind(playable.not());
+        btnStand.disableProperty().bind(playable.not());
+
         playerScore.textProperty().bind(new SimpleStringProperty("Player: ").concat(player.valueProperty().asString()));
         dealerScore.textProperty().bind(new SimpleStringProperty("Dealer: ").concat(dealer.valueProperty().asString()));
 
@@ -111,16 +120,6 @@ public class BlackjackMain extends Application {
             if (newValue.intValue() >= 21) {
                 endGame();
             }
-        });
-
-        player.getCards().addListener((ListChangeListener.Change<? extends Card> change) -> {
-            change.next();
-            playerCards.getChildren().addAll(change.getAddedSubList());
-        });
-
-        dealer.getCards().addListener((ListChangeListener.Change<? extends Card> change) -> {
-            change.next();
-            dealerCards.getChildren().addAll(change.getAddedSubList());
         });
 
         // INIT BUTTONS
@@ -145,18 +144,13 @@ public class BlackjackMain extends Application {
     }
 
     private void startNewGame() {
-        btnPlay.setDisable(true);
-        btnHit.setDisable(false);
-        btnStand.setDisable(false);
+        playable.set(true);
         message.setText("");
 
         deck.refill();
 
         dealer.reset();
         player.reset();
-
-        dealerCards.getChildren().clear();
-        playerCards.getChildren().clear();
 
         dealer.takeCard(deck.drawCard());
         dealer.takeCard(deck.drawCard());
@@ -165,8 +159,7 @@ public class BlackjackMain extends Application {
     }
 
     private void endGame() {
-        btnHit.setDisable(true);
-        btnStand.setDisable(true);
+        playable.set(false);
 
         int dealerValue = dealer.valueProperty().get();
         int playerValue = player.valueProperty().get();
@@ -182,7 +175,6 @@ public class BlackjackMain extends Application {
         }
 
         message.setText(winner + " WON");
-        btnPlay.setDisable(false);
     }
 
     @Override
