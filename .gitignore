@@ -3,14 +3,22 @@
 # Package Files #
 *.war
 *.ear
-/bin
 
 # Eclipse #
 .classpath
 .project
 .settings/
 /bin
+
+# IDEA #
+.idea/
+*.iml
+/out
+
+# Maven #
+dependency-reduced-pom.xml
 /target
 
-# maven #
-dependency-reduced-pom.xml
+# logs #
+*.log
+logs/

@@ -10,7 +10,6 @@ import com.almasb.blackjack.Card.Rank;
  * A typical player hand
  *
  * @author Almas
- * @version 1.0
  */
 public class Hand {
 

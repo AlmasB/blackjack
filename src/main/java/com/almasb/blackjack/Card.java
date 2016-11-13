@@ -13,7 +13,6 @@ import javafx.scene.text.Text;
  * ranging from 'Ace' to '2'
  *
  * @author Almas
- * @version 1.0
  */
 public class Card extends Parent {
 

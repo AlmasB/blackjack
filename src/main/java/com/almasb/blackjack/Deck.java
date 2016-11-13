@@ -7,7 +7,6 @@ import com.almasb.blackjack.Card.Suit;
  * Standard 52 card deck
  *
  * @author Almas
- * @version 1.0
  */
 public class Deck {
 

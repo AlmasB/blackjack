@@ -22,11 +22,9 @@ import javafx.stage.Stage;
 /**
  * Game's logic and UI
  *
- * @author Almas Baimagambetov (ab607@uni.brighton.ac.uk)
- * @version 1.1
- *
+ * @author Almas Baimagambetov
  */
-public class BlackjackMain extends Application {
+public class BlackjackApp extends Application {
 
     private Deck deck = new Deck();
     private Hand dealer, player;

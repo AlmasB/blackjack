@@ -1,101 +1,56 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>Blackjack</groupId>
+
+    <groupId>com.almasb</groupId>
     <artifactId>Blackjack</artifactId>
-    <version>1.0.0</version>
-    <name>Blackjack</name>
-    <description>A popular card game made in JavaFX</description>
+    <version>1.0</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <source.version>1.8</source.version>
+
+        <!-- plugins -->
+        <maven.compiler.version>3.3</maven.compiler.version>
+        <maven.shade.version>2.4.2</maven.shade.version>
+
+        <!-- dependencies -->
+    </properties>
+
     <build>
-        <sourceDirectory>src</sourceDirectory>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>${maven.compiler.version}</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>${source.version}</source>
+                    <target>${source.version}</target>
                 </configuration>
             </plugin>
-
-            <!-- create jar with unpacked dependencies -->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>com.almasb.blackjack.Main</mainClass>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <finalName>${project.artifactId}</finalName>
-                </configuration>
-
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>${maven.shade.version}</version>
                 <executions>
                     <execution>
-                        <id>make-executable-jar</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>single</goal>
+                            <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.almasb.blackjack.BlackjackApp</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
-
-
-            <!-- make mvn exec:java the run command -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <executable>java</executable>
-                    <mainClass>com.almasb.blackjack.Main</mainClass>
-                </configuration>
-            </plugin>
-
         </plugins>
-
-        <!-- add all resources under res/ to jar -->
-
-        <resources>
-            <resource>
-                <directory>res/</directory>
-                <targetPath>res/</targetPath>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
     </build>
-
-    <!-- add my library to dependency list -->
-
-    <dependencies>
-        <dependency>
-            <groupId>com.almasb</groupId>
-            <artifactId>almasb-lib</artifactId>
-            <version>1.1.2</version>
-        </dependency>
-    </dependencies>
-
-    <!-- add local repo -->
-
-    <repositories>
-        <repository>
-            <id>myrepo</id>
-            <url>file://${basedir}/lib</url>
-        </repository>
-    </repositories>
 
 </project>
