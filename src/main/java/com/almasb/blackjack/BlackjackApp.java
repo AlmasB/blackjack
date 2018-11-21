@@ -22,7 +22,6 @@ import javafx.stage.Stage;
 /**
  * Game's logic and UI
  *
- * @author Almas Baimagambetov
  */
 public class BlackjackApp extends Application {
 
@@ -44,7 +43,7 @@ public class BlackjackApp extends Application {
 
         Pane root = new Pane();
         root.setPrefSize(800, 600);
-
+        
         Region background = new Region();
         background.setPrefSize(800, 600);
         background.setStyle("-fx-background-color: rgba(0, 0, 0, 1)");
@@ -68,9 +67,9 @@ public class BlackjackApp extends Application {
         Text playerScore = new Text("Player: ");
         Text player2Score = new Text("Player2: ");
         
-        HBox player1box = new HBox(15, playerCards, playerScore);
+        HBox player1box = new HBox(5, playerCards, playerScore);
         player1box.setAlignment(Pos.CENTER);
-        HBox player2box = new HBox(15, player2Cards,player2Score);
+        HBox player2box = new HBox(5, player2Cards,player2Score);
         player2box.setAlignment(Pos.CENTER);
         leftVBox.getChildren().addAll(dealerScore, dealerCards, message, player1box, player2box);
 
@@ -145,7 +144,6 @@ public class BlackjackApp extends Application {
         });
 
         // INIT BUTTONS
-
         btnPlay.setOnAction(event -> {
         	txtTurn.textProperty().setValue("Turn: Player 1");
             startNewGame();
@@ -221,9 +219,17 @@ public class BlackjackApp extends Application {
         message.setText(winner + " WON");
         turn = 0;
     }
-
+    private Parent startscene() {
+    	StackPane root = new StackPane();
+    	Text hello = new Text("Please Choose the amount of players needed");
+    	
+    	return root;
+    }
     @Override
     public void start(Stage primaryStage) throws Exception {
+    	Scene init_scene = new Scene(startscene()); 
+    	primaryStage.setScene(init_scene);
+    	
         primaryStage.setScene(new Scene(createContent()));
         primaryStage.setWidth(800);
         primaryStage.setHeight(600);
