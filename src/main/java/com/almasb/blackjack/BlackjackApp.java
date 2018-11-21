@@ -27,17 +27,20 @@ import javafx.stage.Stage;
 public class BlackjackApp extends Application {
 
     private Deck deck = new Deck();
-    private Hand dealer, player;
+    private Hand dealer, player, player2;
     private Text message = new Text();
+    private int turn = 0;
 
     private SimpleBooleanProperty playable = new SimpleBooleanProperty(false);
 
     private HBox dealerCards = new HBox(20);
     private HBox playerCards = new HBox(20);
+    private HBox player2Cards = new HBox(20);
 
     private Parent createContent() {
         dealer = new Hand(dealerCards.getChildren());
         player = new Hand(playerCards.getChildren());
+        player2 = new Hand(player2Cards.getChildren());
 
         Pane root = new Pane();
         root.setPrefSize(800, 600);
@@ -58,13 +61,18 @@ public class BlackjackApp extends Application {
         rightBG.setFill(Color.ORANGE);
 
         // LEFT
-        VBox leftVBox = new VBox(50);
+        VBox leftVBox = new VBox(10);
         leftVBox.setAlignment(Pos.TOP_CENTER);
 
         Text dealerScore = new Text("Dealer: ");
         Text playerScore = new Text("Player: ");
-
-        leftVBox.getChildren().addAll(dealerScore, dealerCards, message, playerCards, playerScore);
+        Text player2Score = new Text("Player2: ");
+        
+        HBox player1box = new HBox(15, playerCards, playerScore);
+        player1box.setAlignment(Pos.CENTER);
+        HBox player2box = new HBox(15, player2Cards,player2Score);
+        player2box.setAlignment(Pos.CENTER);
+        leftVBox.getChildren().addAll(dealerScore, dealerCards, message, player1box, player2box);
 
         // RIGHT
 
@@ -74,16 +82,20 @@ public class BlackjackApp extends Application {
         final TextField bet = new TextField("BET");
         bet.setDisable(true);
         bet.setMaxWidth(50);
-        Text money = new Text("MONEY");
-
+        Text txtTurn  = new Text("turn: ");
         Button btnPlay = new Button("PLAY");
         Button btnHit = new Button("HIT");
+        //Button btnHit2 = new Button("HIT PLAYER 2");
+        
         Button btnStand = new Button("STAND");
-
-        HBox buttonsHBox = new HBox(15, btnHit, btnStand);
+        //Button btnStand2 = new Button("STAND P2");
+        //HBox turnHBox = new HBox(10, turn);
+        HBox buttonsHBox = new HBox(10, btnHit);
         buttonsHBox.setAlignment(Pos.CENTER);
-
-        rightVBox.getChildren().addAll(bet, btnPlay, money, buttonsHBox);
+        HBox standsHbox = new HBox(10, btnStand);
+        standsHbox.setAlignment(Pos.CENTER);
+        
+        rightVBox.getChildren().addAll(txtTurn,bet, btnPlay, buttonsHBox, standsHbox);
 
         // ADD BOTH STACKS TO ROOT LAYOUT
 
@@ -94,14 +106,35 @@ public class BlackjackApp extends Application {
 
         btnPlay.disableProperty().bind(playable);
         btnHit.disableProperty().bind(playable.not());
+        //btnHit2.disableProperty().bind(playable.not());
         btnStand.disableProperty().bind(playable.not());
+        //btnStand2.disableProperty().bind(playable.not());
 
+        //visuals
         playerScore.textProperty().bind(new SimpleStringProperty("Player: ").concat(player.valueProperty().asString()));
+        player2Score.textProperty().bind(new SimpleStringProperty("Player2 : ").concat(player2.valueProperty().asString()));
         dealerScore.textProperty().bind(new SimpleStringProperty("Dealer: ").concat(dealer.valueProperty().asString()));
+        
 
+        txtTurn.textProperty().setValue("Turn: Player 1");
+        
         player.valueProperty().addListener((obs, old, newValue) -> {
             if (newValue.intValue() >= 21) {
-                endGame();
+            	if(turn >1) {
+            		endGame();
+            	}else {
+            		turn++;    
+            		txtTurn.textProperty().setValue("Turn: Player 2");
+            	}
+            }
+        });
+        player2.valueProperty().addListener((obs, old, newValue) -> {
+            if (newValue.intValue() >= 21) {
+            	if(turn >1) {
+            		endGame();
+            	}else {
+            		turn++;
+            	}
             }
         });
 
@@ -114,21 +147,36 @@ public class BlackjackApp extends Application {
         // INIT BUTTONS
 
         btnPlay.setOnAction(event -> {
+        	txtTurn.textProperty().setValue("Turn: Player 1");
             startNewGame();
         });
 
         btnHit.setOnAction(event -> {
-            player.takeCard(deck.drawCard());
+            if(turn == 0 && player.valueProperty().get() < 21) {
+            	player.takeCard(deck.drawCard());            	
+            }
+            else if (turn == 1 && player2.valueProperty().get() < 21) {
+            	player2.takeCard(deck.drawCard());
+            }
+            else{
+            	while (dealer.valueProperty().get() < 17) {
+        			dealer.takeCard(deck.drawCard());
+        		}
+        		endGame();
+            }
         });
 
         btnStand.setOnAction(event -> {
-            while (dealer.valueProperty().get() < 17) {
-                dealer.takeCard(deck.drawCard());
-            }
-
-            endGame();
+        	turn++;
+        	txtTurn.textProperty().setValue("Turn: Player 2");
+        	if(turn > 1) {        		
+        		while (dealer.valueProperty().get() < 17) {
+        			dealer.takeCard(deck.drawCard());
+        		}
+        		endGame();
+            	txtTurn.textProperty().setValue("Turn: Player 1");
+        	}            
         });
-
         return root;
     }
 
@@ -140,11 +188,14 @@ public class BlackjackApp extends Application {
 
         dealer.reset();
         player.reset();
+        player2.reset();
 
         dealer.takeCard(deck.drawCard());
         dealer.takeCard(deck.drawCard());
         player.takeCard(deck.drawCard());
         player.takeCard(deck.drawCard());
+        player2.takeCard(deck.drawCard());
+        player2.takeCard(deck.drawCard());
     }
 
     private void endGame() {
@@ -152,9 +203,11 @@ public class BlackjackApp extends Application {
 
         int dealerValue = dealer.valueProperty().get();
         int playerValue = player.valueProperty().get();
+        int player2Value = player2.valueProperty().get();
         String winner = "Exceptional case: d: " + dealerValue + " p: " + playerValue;
-
+        
         // the order of checking is important
+        /*
         if (dealerValue == 21 || playerValue > 21 || dealerValue == playerValue
                 || (dealerValue < 21 && dealerValue > playerValue)) {
             winner = "DEALER";
@@ -162,8 +215,11 @@ public class BlackjackApp extends Application {
         else if (playerValue == 21 || dealerValue > 21 || playerValue > dealerValue) {
             winner = "PLAYER";
         }
-
+         
+        if(dealerValue == 21 || (playerValue > 21)) 
+        */
         message.setText(winner + " WON");
+        turn = 0;
     }
 
     @Override
