@@ -33,13 +33,14 @@ public class BlackjackApp extends Application {
     //private ObservableList<Hand> players; 
     private Hand dealer;
     private Text message = new Text();
-    private int turn = 0, numPlayers = 2;
-    private Hand[] players = new Hand[numPlayers]; 
+    private int turn = 0;
+    private int numPlayers;
+    private Hand[] players = new Hand[10]; 
 
     private SimpleBooleanProperty playable = new SimpleBooleanProperty(false);
 
     private HBox dealerCards = new HBox(20);
-    private HBox[] playerCards = new HBox[numPlayers]; 
+    private HBox[] playerCards = new HBox[10]; 
     
     private Parent createContent() {
     
@@ -232,10 +233,42 @@ public class BlackjackApp extends Application {
     }
     @Override
     public void start(Stage primaryStage) throws Exception {    	
-        primaryStage.setScene(new Scene(createContent()));
-        primaryStage.setWidth(800);
-        primaryStage.setHeight(600);
-        primaryStage.setResizable(false);
+        Text welcome = new Text("Welcome to Blackjack. Please select number of players.");
+        Button onePlayer = new Button("1 Players");
+        Button twoPlayer = new Button("2 Players");
+        Button threePlayer = new Button("3 Players");
+        onePlayer.setOnAction(e -> {
+        	numPlayers = 1;
+            primaryStage.setScene(new Scene(createContent()));
+            primaryStage.setWidth(800);
+            primaryStage.setHeight(600);
+            primaryStage.setResizable(false);
+            primaryStage.setTitle("BlackJack");
+            primaryStage.show();        
+        });
+        twoPlayer.setOnAction(e -> {
+        	numPlayers = 2;
+            primaryStage.setScene(new Scene(createContent()));
+            primaryStage.setWidth(800);
+            primaryStage.setHeight(600);
+            primaryStage.setResizable(false);
+            primaryStage.setTitle("BlackJack");
+            primaryStage.show();        
+        });
+        threePlayer.setOnAction(e -> {
+        	numPlayers = 3;
+            primaryStage.setScene(new Scene(createContent()));
+            primaryStage.setWidth(800);
+            primaryStage.setHeight(600);
+            primaryStage.setResizable(false);
+            primaryStage.setTitle("BlackJack");
+            primaryStage.show();        
+        });
+        
+    VBox introLayout = new VBox(60);
+    introLayout.getChildren().addAll(welcome, onePlayer, twoPlayer, threePlayer);
+    Scene introScene = new Scene(introLayout, 400, 400);
+    primaryStage.setScene(introScene);
         primaryStage.setTitle("BlackJack");
         primaryStage.show();
     }
