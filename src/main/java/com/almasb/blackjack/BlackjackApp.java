@@ -163,31 +163,29 @@ public class BlackjackApp extends Application {
 
         btnHit.setOnAction(event -> {
         	if(turn >= numPlayers) {
-        		btnStand.fire();
+        		txtTurn.textProperty().setValue("Dealer Turn");
+
+        		endGame();
         	}
-        	else {
-        		int handVal = players[turn].valueProperty().get();
-        	
-        		if(handVal < 21) {
+        	else { 
+        		if(players[turn].valueProperty().get() < 21) {
         			players[turn].takeCard(deck.drawCard());
+
         		}else {
-        			turn++;
-        			txtTurn.textProperty().setValue("Turn: Player " + turn);
+        			btnStand.fire();
         		}
         	}
     
         });
 
         btnStand.setOnAction(event -> {
-    	turn++;
+        	turn++;
         	if(turn >= numPlayers) { 
         		txtTurn.textProperty().setValue("Dealer Turn");
-        		while (dealer.valueProperty().get() < 17)
-        			dealer.takeCard(deck.drawCard());
-        	}else{
-        			txtTurn.textProperty().setValue("Turn: Player" + turn);
-        	}
         		endGame();
+        	}else{
+        			txtTurn.textProperty().setValue("Turn: Player " + turn);
+        	}
         });
         return root;
     }
@@ -215,18 +213,22 @@ public class BlackjackApp extends Application {
     private void endGame() {
         playable.set(false);
         ArrayList<String> winners = new ArrayList<String>();
-        int dealerValue = dealer.valueProperty().get();
         int playerValue;
         
+		while (dealer.valueProperty().get() < 17)
+			dealer.takeCard(deck.drawCard());
+		
+        int dealerValue = dealer.valueProperty().get();
         String winner = "Exceptional case: \n d: " + dealerValue;
         
         for(int i =0; i < numPlayers; i++) {
         	playerValue = players[i].valueProperty().get();
-        	
-        	if (playerValue == 21 || dealerValue > 21 || playerValue > dealerValue) {
-                winners.add("Player " + i);
+        	System.out.println(playerValue);
+        	if(playerValue <= 21) {      	
+        		if (playerValue == 21 || dealerValue > 21 || playerValue > dealerValue) {
+        			winners.add("Player " + i);
+        		}
         	}
-        	
         }        
         message.setText("Winners against Dealer: " + winners.toString());
         turn = 0;
