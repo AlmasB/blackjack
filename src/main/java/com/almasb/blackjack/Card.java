@@ -19,8 +19,8 @@ import javafx.scene.text.Text;
  */
 public class Card extends Parent {
 
-    private static final int CARD_WIDTH = 100;
-    private static final int CARD_HEIGHT = 140;
+    private static final int CARD_WIDTH = 80;
+    private static final int CARD_HEIGHT = 120;
 
     enum Suit {
         HEARTS, DIAMONDS, CLUBS, SPADES;

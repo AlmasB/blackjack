@@ -21,6 +21,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import javafx.stage.Stage;
 
 /**
@@ -28,7 +30,10 @@ import javafx.stage.Stage;
  *
  */
 public class BlackjackApp extends Application {
-
+	
+	private static final int WINDOW_WIDTH = 1000;
+	private static final int WINDOW_HEIGHT = 780;
+	
     private Deck deck = new Deck();
     //private ObservableList<Hand> players; 
     private Hand dealer;
@@ -51,22 +56,24 @@ public class BlackjackApp extends Application {
     		//players.add(new Hand(playerCards[i].getChildren());
     		players[i] = new Hand(playerCards[i].getChildren());
     	}
+    	
     	//JAVAFX STUFF********************************
     	
         Pane root = new Pane();
         root.setPrefSize(800, 600);
+        root.setStyle("-fx-font: 'Garamond'; -fx-font-size: 16;");
         
 		Region background = new Region();
-        background.setPrefSize(800, 600);
+        background.setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         background.setStyle("-fx-background-color: rgba(0, 0, 0, 1)");
 
         HBox rootLayout = new HBox(5);
         rootLayout.setPadding(new Insets(5, 5, 5, 5));
-        Rectangle leftBG = new Rectangle(550, 560);
+        Rectangle leftBG = new Rectangle(700, 750);
         leftBG.setArcWidth(50);
         leftBG.setArcHeight(50);
         leftBG.setFill(Color.GREEN);
-        Rectangle rightBG = new Rectangle(230, 560);
+        Rectangle rightBG = new Rectangle(280, 750);
         rightBG.setArcWidth(50);
         rightBG.setArcHeight(50);
         rightBG.setFill(Color.ORANGE);
@@ -79,9 +86,11 @@ public class BlackjackApp extends Application {
         leftVBox.getChildren().add(dealerScore);
         leftVBox.getChildren().add(dealerCards);
         leftVBox.getChildren().add(message);
+        Text[] playersScore = new Text[10];
         
         for(int i = 0; i < numPlayers; i++) {
-        	HBox playersBox = new HBox(5, playerCards[i], new Text("Player "+ i + ":"));
+        	playersScore[i] = new Text("Player "+ i + ":");
+        	HBox playersBox = new HBox(5, playerCards[i], playersScore[i]);
         	playersBox.setAlignment(Pos.CENTER);
         	leftVBox.getChildren().add(playersBox);
         }
@@ -97,6 +106,7 @@ public class BlackjackApp extends Application {
         bet.setMaxWidth(50);
         
         Text txtTurn  = new Text("Turn: ");
+        txtTurn.setFont(Font.font("Britannic Bold",16));
         Button btnPlay = new Button("PLAY");
         Button btnHit = new Button("HIT");
         
@@ -117,17 +127,16 @@ public class BlackjackApp extends Application {
 
         btnPlay.disableProperty().bind(playable);
         btnHit.disableProperty().bind(playable.not());
-        //btnHit2.disableProperty().bind(playable.not());
         btnStand.disableProperty().bind(playable.not());
-        //btnStand2.disableProperty().bind(playable.not());
 
-        //visuals
-//        playerScore.textProperty().bind(new SimpleStringProperty("Player: ").concat(player.valueProperty().asString()));
-//        player2Score.textProperty().bind(new SimpleStringProperty("Player2 : ").concat(player2.valueProperty().asString()));
-   
-        
+
+        dealerScore.setFont(Font.font("Britannic Bold", 16));
         dealerScore.textProperty().bind(new SimpleStringProperty("Dealer: ").concat(dealer.valueProperty().asString()));
         
+        for(int i = 0; i < numPlayers; i++) {
+        	playersScore[i].setFont(Font.font("Britannic Bold", 16));
+        	playersScore[i].textProperty().bind(new SimpleStringProperty("Player " + i + ": ").concat(players[i].valueProperty().asString()));
+        }
 
         
 //        player.valueProperty().addListener((obs, old, newValue) -> {
@@ -211,7 +220,9 @@ public class BlackjackApp extends Application {
     }
 
     private void endGame() {
-        playable.set(false);
+        playable.set(false);        
+        message.setFont(Font.font("Elephant", FontPosture.ITALIC, 22));
+        
         ArrayList<String> winners = new ArrayList<String>();
         int playerValue;
         
@@ -219,7 +230,6 @@ public class BlackjackApp extends Application {
 			dealer.takeCard(deck.drawCard());
 		
         int dealerValue = dealer.valueProperty().get();
-        String winner = "Exceptional case: \n d: " + dealerValue;
         
         for(int i =0; i < numPlayers; i++) {
         	playerValue = players[i].valueProperty().get();
@@ -229,47 +239,58 @@ public class BlackjackApp extends Application {
         			winners.add("Player " + i);
         		}
         	}
-        }        
-        message.setText("Winners against Dealer: " + winners.toString());
+        }                
+        
+        if(winners.isEmpty())
+        	message.setText("DEALER WON");
+        else
+        	message.setText("Winners against Dealer: " + winners.toString());       
+       
         turn = 0;
     }
+    
+    public void setPrimaryStage(Stage stage) {
+    	stage.setScene(new Scene(createContent()));
+    	stage.setWidth(WINDOW_WIDTH);
+    	stage.setHeight(WINDOW_HEIGHT);
+    	stage.setResizable(false);
+    	stage.setTitle("BlackJack");
+    	stage.show();  
+    }
+    
     @Override
     public void start(Stage primaryStage) throws Exception {    	
-        Text welcome = new Text("Welcome to Blackjack. Please select number of players.");
+        Text welcome = new Text("Welcome to Blackjack. Please select number of players.");        
         Button onePlayer = new Button("1 Players");
         Button twoPlayer = new Button("2 Players");
         Button threePlayer = new Button("3 Players");
+        
+        
+//        welcome.setFont(Font.font("Britannic Bold", FontPosture.ITALIC,24));
+//        onePlayer.setFont(Font.font("Britannic Bold",16));
+//        twoPlayer.setFont(Font.font("Britannic Bold",16));
+//        threePlayer.setFont(Font.font("Britannic Bold",16));
+        
         onePlayer.setOnAction(e -> {
         	numPlayers = 1;
-            primaryStage.setScene(new Scene(createContent()));
-            primaryStage.setWidth(800);
-            primaryStage.setHeight(600);
-            primaryStage.setResizable(false);
-            primaryStage.setTitle("BlackJack");
-            primaryStage.show();        
+            setPrimaryStage(primaryStage);       
         });
         twoPlayer.setOnAction(e -> {
         	numPlayers = 2;
-            primaryStage.setScene(new Scene(createContent()));
-            primaryStage.setWidth(800);
-            primaryStage.setHeight(600);
-            primaryStage.setResizable(false);
-            primaryStage.setTitle("BlackJack");
-            primaryStage.show();        
+        	setPrimaryStage(primaryStage);      
         });
         threePlayer.setOnAction(e -> {
         	numPlayers = 3;
-            primaryStage.setScene(new Scene(createContent()));
-            primaryStage.setWidth(800);
-            primaryStage.setHeight(600);
-            primaryStage.setResizable(false);
-            primaryStage.setTitle("BlackJack");
-            primaryStage.show();        
+        	setPrimaryStage(primaryStage);       
         });
         
     VBox introLayout = new VBox(60);
+    introLayout.setStyle("-fx-font: 'Britannic Bold'; "
+    		+ "-fx-font-size: 23; "
+    		+ "-fx-font-style: italic; "
+    		+ "-fx-font-weight: bold;");
     introLayout.getChildren().addAll(welcome, onePlayer, twoPlayer, threePlayer);
-    Scene introScene = new Scene(introLayout, 400, 400);
+    Scene introScene = new Scene(introLayout, 600, 500);
     primaryStage.setScene(introScene);
         primaryStage.setTitle("BlackJack");
         primaryStage.show();
