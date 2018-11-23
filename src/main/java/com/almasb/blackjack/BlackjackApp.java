@@ -13,6 +13,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -61,7 +68,7 @@ public class BlackjackApp extends Application {
     	
         Pane root = new Pane();
         root.setPrefSize(800, 600);
-        root.setStyle("-fx-font: 'Garamond'; -fx-font-size: 16;");
+        root.setStyle("-fx-font: 'Garamond'; -fx-font-size: 14pt;");
         
 		Region background = new Region();
         background.setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -261,12 +268,16 @@ public class BlackjackApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {    	
         Text welcome = new Text("Welcome to Blackjack. Please select number of players.");        
-        Button onePlayer = new Button("1 Players");
+        Button onePlayer = new Button("1 Player");
         Button twoPlayer = new Button("2 Players");
         Button threePlayer = new Button("3 Players");
         
+        Image image = new Image(BlackjackApp.class.getResourceAsStream("images/back.png"));
+        BackgroundImage backimage = new BackgroundImage(image, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, null);
+        Background background = new Background(backimage);
         
-//        welcome.setFont(Font.font("Britannic Bold", FontPosture.ITALIC,24));
+        welcome.setFont(Font.font("Britannic Bold", FontPosture.ITALIC,24));
+        welcome.setFill(Color.WHITE);
 //        onePlayer.setFont(Font.font("Britannic Bold",16));
 //        twoPlayer.setFont(Font.font("Britannic Bold",16));
 //        threePlayer.setFont(Font.font("Britannic Bold",16));
@@ -284,15 +295,18 @@ public class BlackjackApp extends Application {
         	setPrimaryStage(primaryStage);       
         });
         
-    VBox introLayout = new VBox(60);
-    introLayout.setStyle("-fx-font: 'Britannic Bold'; "
-    		+ "-fx-font-size: 23; "
-    		+ "-fx-font-style: italic; "
-    		+ "-fx-font-weight: bold;");
-    introLayout.getChildren().addAll(welcome, onePlayer, twoPlayer, threePlayer);
-    Scene introScene = new Scene(introLayout, 600, 500);
-    primaryStage.setScene(introScene);
+        VBox introLayout = new VBox(60);
+        introLayout.setStyle("-fx-font: 'Britannic Bold'; "
+        		+ "-fx-font-size: 16pt; "
+        		+ "-fx-font-style: italic; "
+        		+ "-fx-font-weight: bold;");
+        introLayout.setBackground(background);
+        introLayout.getChildren().addAll(welcome, onePlayer, twoPlayer, threePlayer);
+        introLayout.setAlignment(Pos.CENTER);
+        Scene introScene = new Scene(introLayout, 600, 400);
+        primaryStage.setScene(introScene);
         primaryStage.setTitle("BlackJack");
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
