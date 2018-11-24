@@ -5,7 +5,9 @@ import java.util.List;
 
 import javafx.application.Application;
 import javafx.collections.ObservableList;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -39,7 +41,7 @@ import javafx.stage.Stage;
 public class BlackjackApp extends Application {
 	
 	private static final int WINDOW_WIDTH = 1000;
-	private static final int WINDOW_HEIGHT = 780;
+	private static final int WINDOW_HEIGHT = 700;
 	
     private Deck deck = new Deck();
     //private ObservableList<Hand> players; 
@@ -76,11 +78,11 @@ public class BlackjackApp extends Application {
 
         HBox rootLayout = new HBox(5);
         rootLayout.setPadding(new Insets(5, 5, 5, 5));
-        Rectangle leftBG = new Rectangle(700, 750);
+        Rectangle leftBG = new Rectangle(700, WINDOW_HEIGHT-40);
         leftBG.setArcWidth(50);
         leftBG.setArcHeight(50);
         leftBG.setFill(Color.GREEN);
-        Rectangle rightBG = new Rectangle(280, 750);
+        Rectangle rightBG = new Rectangle(280, WINDOW_HEIGHT-40);
         rightBG.setArcWidth(50);
         rightBG.setArcHeight(50);
         rightBG.setFill(Color.ORANGE);
@@ -141,30 +143,14 @@ public class BlackjackApp extends Application {
         dealerScore.textProperty().bind(new SimpleStringProperty("Dealer: ").concat(dealer.valueProperty().asString()));
         
         for(int i = 0; i < numPlayers; i++) {
+        	IntegerProperty score = players[i].valueProperty();
         	playersScore[i].setFont(Font.font("Britannic Bold", 16));
-        	playersScore[i].textProperty().bind(new SimpleStringProperty("Player " + i + ": ").concat(players[i].valueProperty().asString()));
+        	playersScore[i].textProperty().bind(new SimpleStringProperty("Player " + i + ": ").concat(score.asString()));
+        	score.addListener(obv -> {
+        		if(score.intValue() >= 21) btnStand.fire();
+        	});
         }
-
-        
-//        player.valueProperty().addListener((obs, old, newValue) -> {
-//            if (newValue.intValue() >= 21) {
-//            	if(turn >1) {
-//            		endGame();
-//            	}else {
-//            		turn++;    
-//            		txtTurn.textProperty().setValue("Turn: Player 2");
-//            	}
-//            }
-//        });
-//        player2.valueProperty().addListener((obs, old, newValue) -> {
-//            if (newValue.intValue() >= 21) {
-//            	if(turn >1) {
-//            		endGame();
-//            	}else {
-//            		turn++;
-//            	}
-//            }
-//        });
+     
 
         dealer.valueProperty().addListener((obs, old, newValue) -> {
             if (newValue.intValue() >= 21) {
@@ -180,15 +166,11 @@ public class BlackjackApp extends Application {
         btnHit.setOnAction(event -> {
         	if(turn >= numPlayers) {
         		txtTurn.textProperty().setValue("Dealer Turn");
-
         		endGame();
         	}
         	else { 
         		if(players[turn].valueProperty().get() < 21) {
         			players[turn].takeCard(deck.drawCard());
-
-        		}else {
-        			btnStand.fire();
         		}
         	}
     
@@ -197,10 +179,10 @@ public class BlackjackApp extends Application {
         btnStand.setOnAction(event -> {
         	turn++;
         	if(turn >= numPlayers) { 
-        		txtTurn.textProperty().setValue("Dealer Turn");
+        		txtTurn.textProperty().setValue("EndGame");
         		endGame();
         	}else{
-        			txtTurn.textProperty().setValue("Turn: Player " + turn);
+        			txtTurn.textProperty().setValue("Player " + turn + "'s turn");
         	}
         });
         return root;
@@ -240,7 +222,7 @@ public class BlackjackApp extends Application {
         
         for(int i =0; i < numPlayers; i++) {
         	playerValue = players[i].valueProperty().get();
-        	System.out.println(playerValue);
+        	//System.out.println(playerValue);
         	if(playerValue <= 21) {      	
         		if (playerValue == 21 || dealerValue > 21 || playerValue > dealerValue) {
         			winners.add("Player " + i);
@@ -278,9 +260,6 @@ public class BlackjackApp extends Application {
         
         welcome.setFont(Font.font("Britannic Bold", FontPosture.ITALIC,24));
         welcome.setFill(Color.WHITE);
-//        onePlayer.setFont(Font.font("Britannic Bold",16));
-//        twoPlayer.setFont(Font.font("Britannic Bold",16));
-//        threePlayer.setFont(Font.font("Britannic Bold",16));
         
         onePlayer.setOnAction(e -> {
         	numPlayers = 1;
