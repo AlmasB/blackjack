@@ -11,6 +11,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -44,20 +45,22 @@ public class BlackjackApp extends Application {
 	private static final int WINDOW_HEIGHT = 700;
 	
     private Deck deck = new Deck();
-    //private ObservableList<Hand> players; 
-    private Hand dealer;
     private Text message = new Text();
     private int turn = 0;
     private int numPlayers;
     private Hand[] players = new Hand[10]; 
 
     private SimpleBooleanProperty playable = new SimpleBooleanProperty(false);
-
+    
+    private Hand dealer;
+    private ObservableList<Node> cards; //Observable list of children of dealerCards
+    private Card cardshow;
     private HBox dealerCards = new HBox(20);
     private HBox[] playerCards = new HBox[10]; 
     
     private Parent createContent() {
-    
+    	
+    	cards = dealerCards.getChildren();
         dealer = new Hand(dealerCards.getChildren());
         
     	for(int i = 0; i < numPlayers; i++) {
@@ -65,8 +68,7 @@ public class BlackjackApp extends Application {
     		//players.add(new Hand(playerCards[i].getChildren());
     		players[i] = new Hand(playerCards[i].getChildren());
     	}
-    	
-    	//JAVAFX STUFF********************************
+    	// JAVAFX STUFF********************************
     	
         Pane root = new Pane();
         root.setPrefSize(800, 600);
@@ -96,13 +98,15 @@ public class BlackjackApp extends Application {
         leftVBox.getChildren().add(dealerCards);
         leftVBox.getChildren().add(message);
         Text[] playersScore = new Text[10];
+        HBox[] playersBox = new HBox[10];
         
         for(int i = 0; i < numPlayers; i++) {
         	playersScore[i] = new Text("Player "+ i + ":");
-        	HBox playersBox = new HBox(5, playerCards[i], playersScore[i]);
-        	playersBox.setAlignment(Pos.CENTER);
-        	leftVBox.getChildren().add(playersBox);
+        	playersBox[i] = new HBox(5, playerCards[i], playersScore[i]);
+        	playersBox[i].setAlignment(Pos.CENTER);
+        	leftVBox.getChildren().add(playersBox[i]);
         }
+        
         
         
         // RIGHT
@@ -140,7 +144,7 @@ public class BlackjackApp extends Application {
 
 
         dealerScore.setFont(Font.font("Britannic Bold", 16));
-        dealerScore.textProperty().bind(new SimpleStringProperty("Dealer: ").concat(dealer.valueProperty().asString()));
+        //dealerScore.textProperty().bind(new SimpleStringProperty("Dealer: ").concat(dealer.valueProperty().asString()));
         
         for(int i = 0; i < numPlayers; i++) {
         	IntegerProperty score = players[i].valueProperty();
@@ -180,6 +184,7 @@ public class BlackjackApp extends Application {
         	turn++;
         	if(turn >= numPlayers) { 
         		txtTurn.textProperty().setValue("EndGame");
+        		dealerScore.textProperty().bind(new SimpleStringProperty("Dealer: ").concat(dealer.valueProperty().asString()));
         		endGame();
         	}else{
         			txtTurn.textProperty().setValue("Player " + turn + "'s turn");
@@ -187,7 +192,7 @@ public class BlackjackApp extends Application {
         });
         return root;
     }
-
+    
     private void startNewGame() {
         playable.set(true);
         message.setText("");
@@ -197,7 +202,9 @@ public class BlackjackApp extends Application {
         deck.refill();
         //Dealer 
         dealer.reset();
-        dealer.takeCard(deck.drawCard());
+        Card cardflipped = deck.drawCardfacedown();
+        dealer.takeCard(cardflipped);
+        cardshow = new Card(cardflipped.suit,cardflipped.rank);
         dealer.takeCard(deck.drawCard());
         
         //Players
@@ -211,14 +218,13 @@ public class BlackjackApp extends Application {
     private void endGame() {
         playable.set(false);        
         message.setFont(Font.font("Elephant", FontPosture.ITALIC, 22));
-        
         ArrayList<String> winners = new ArrayList<String>();
         int playerValue;
-        
 		while (dealer.valueProperty().get() < 17)
 			dealer.takeCard(deck.drawCard());
 		
         int dealerValue = dealer.valueProperty().get();
+        cards.set(0, cardshow);
         
         for(int i =0; i < numPlayers; i++) {
         	playerValue = players[i].valueProperty().get();
@@ -278,7 +284,7 @@ public class BlackjackApp extends Application {
         introLayout.setStyle("-fx-font: 'Britannic Bold'; "
         		+ "-fx-font-size: 16pt; "
         		+ "-fx-font-style: italic; "
-        		+ "-fx-font-weight: bold;");
+        		+ "-fx-font-weight: bold; ");
         introLayout.setBackground(background);
         introLayout.getChildren().addAll(welcome, onePlayer, twoPlayer, threePlayer);
         introLayout.setAlignment(Pos.CENTER);

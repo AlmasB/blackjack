@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -21,6 +22,7 @@ public class Card extends Parent {
 
     private static final int CARD_WIDTH = 80;
     private static final int CARD_HEIGHT = 120;
+    
 
     enum Suit {
         HEARTS, DIAMONDS, CLUBS, SPADES;
@@ -50,11 +52,13 @@ public class Card extends Parent {
     public final Suit suit;
     public final Rank rank;
     public final int value;
+    public final boolean flip;
 
     public Card(Suit suit, Rank rank) {
         this.suit = suit;
         this.rank = rank;
         this.value = rank.value;
+        this.flip = false;
 
         Rectangle bg = new Rectangle(CARD_WIDTH, CARD_HEIGHT);
         bg.setArcWidth(20);
@@ -77,6 +81,36 @@ public class Card extends Parent {
         view.setY(CARD_HEIGHT - 32);
 
         getChildren().addAll(bg, new ImageView(suit.image), view, text1, text2);
+    }
+    public Card(Suit suit, Rank rank, boolean flip) {
+        this.suit = suit;
+        this.rank = rank;
+        this.value = rank.value;
+        this.flip = flip;
+        
+        Rectangle bg = new Rectangle(CARD_WIDTH, CARD_HEIGHT);
+        bg.setArcWidth(20);
+        bg.setArcHeight(20);
+        bg.setFill(Color.SADDLEBROWN);
+        
+        Line line1 = new Line(CARD_WIDTH, CARD_HEIGHT,CARD_WIDTH, CARD_HEIGHT);
+        Line line2 = new Line(CARD_WIDTH, CARD_HEIGHT,CARD_WIDTH, CARD_HEIGHT);
+        
+        line1.endXProperty().bind(bg.widthProperty().subtract(CARD_WIDTH-1));
+        line1.endYProperty().bind(bg.heightProperty().subtract(CARD_HEIGHT-1));        
+        line2.startXProperty().bind(bg.widthProperty().subtract(CARD_WIDTH-1));
+        line2.endYProperty().bind(bg.heightProperty().subtract(CARD_HEIGHT-1));
+        
+        line1.setStroke(Color.GREEN);
+        line1.setFill(Color.BLACK);
+        line1.setStrokeWidth(3);
+        
+        line2.setStroke(Color.GREEN);
+        line2.setFill(Color.BLACK);
+        line2.setStrokeWidth(3);
+        
+        getChildren().addAll(bg,line1,line2);
+        
     }
 
     @Override
