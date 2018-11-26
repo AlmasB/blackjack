@@ -34,6 +34,7 @@ public class Deck {
         }
         return card;
     }
+    
     public Card drawCardfacedown() {
         Card card = null;
         Card cardFlipped = null;
@@ -45,4 +46,5 @@ public class Deck {
         }
         return cardFlipped;
     }
+    
 }

@@ -164,6 +164,7 @@ public class BlackjackApp extends Application {
         // INIT BUTTONS
         btnPlay.setOnAction(event -> {
         	txtTurn.textProperty().setValue("Turn: Player 0");
+        	dealerScore.setText("Dealer");
         	startNewGame();
         });
 
@@ -184,7 +185,7 @@ public class BlackjackApp extends Application {
         	turn++;
         	if(turn >= numPlayers) { 
         		txtTurn.textProperty().setValue("EndGame");
-        		dealerScore.textProperty().bind(new SimpleStringProperty("Dealer: ").concat(dealer.valueProperty().asString()));
+        		dealerScore.setText("Dealer: " + dealer.valueProperty().getValue());
         		endGame();
         	}else{
         			txtTurn.textProperty().setValue("Player " + turn + "'s turn");
@@ -219,6 +220,7 @@ public class BlackjackApp extends Application {
         playable.set(false);        
         message.setFont(Font.font("Elephant", FontPosture.ITALIC, 22));
         ArrayList<String> winners = new ArrayList<String>();
+        
         int playerValue;
 		while (dealer.valueProperty().get() < 17)
 			dealer.takeCard(deck.drawCard());

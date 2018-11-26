@@ -82,16 +82,24 @@ public class Card extends Parent {
 
         getChildren().addAll(bg, new ImageView(suit.image), view, text1, text2);
     }
+    /**
+     * Something is wrong with the flip param, I might have to turn this into a method flipped and 
+     * and 
+     * @param suit
+     * @param rank
+     * @param flip
+     */
     public Card(Suit suit, Rank rank, boolean flip) {
         this.suit = suit;
         this.rank = rank;
         this.value = rank.value;
+        assert(flip == true);
         this.flip = flip;
         
         Rectangle bg = new Rectangle(CARD_WIDTH, CARD_HEIGHT);
         bg.setArcWidth(20);
         bg.setArcHeight(20);
-        bg.setFill(Color.SADDLEBROWN);
+        bg.setFill(Color.ROSYBROWN);
         
         Line line1 = new Line(CARD_WIDTH, CARD_HEIGHT,CARD_WIDTH, CARD_HEIGHT);
         Line line2 = new Line(CARD_WIDTH, CARD_HEIGHT,CARD_WIDTH, CARD_HEIGHT);
