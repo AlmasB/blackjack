@@ -169,22 +169,15 @@ public class BlackjackApp extends Application {
         });
 
         btnHit.setOnAction(event -> {
-        	if(turn >= numPlayers) {
-        		txtTurn.textProperty().setValue("Dealer Turn");
-        		endGame();
-        	}
-        	else { 
-        		if(players[turn].valueProperty().get() < 21) {
-        			players[turn].takeCard(deck.drawCard());
-        		}
-        	}
-    
+        	players[turn].takeCard(deck.drawCard());
         });
 
         btnStand.setOnAction(event -> {
         	turn++;
         	if(turn >= numPlayers) { 
         		txtTurn.textProperty().setValue("EndGame");
+        		while (dealer.valueProperty().get() < 17)
+        			dealer.takeCard(deck.drawCard());
         		dealerScore.setText("Dealer: " + dealer.valueProperty().getValue());
         		endGame();
         	}else{
@@ -222,8 +215,7 @@ public class BlackjackApp extends Application {
         ArrayList<String> winners = new ArrayList<String>();
         
         int playerValue;
-		while (dealer.valueProperty().get() < 17)
-			dealer.takeCard(deck.drawCard());
+
 		
         int dealerValue = dealer.valueProperty().get();
         cards.set(0, cardshow);
