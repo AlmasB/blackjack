@@ -63,10 +63,10 @@ public class BlackjackApp extends Application {
     	cards = dealerCards.getChildren();
         dealer = new Hand(dealerCards.getChildren());
         
-    	for(int i = 0; i < numPlayers; i++) {
-    		playerCards[i] = new HBox(20);
+    	for(int i = 1; i <= numPlayers; i++) {
+    		playerCards[i-1] = new HBox(20);
     		//players.add(new Hand(playerCards[i].getChildren());
-    		players[i] = new Hand(playerCards[i].getChildren());
+    		players[i-1] = new Hand(playerCards[i-1].getChildren());
     	}
     	// JAVAFX STUFF********************************
     	
@@ -100,11 +100,11 @@ public class BlackjackApp extends Application {
         Text[] playersScore = new Text[10];
         HBox[] playersBox = new HBox[10];
         
-        for(int i = 0; i < numPlayers; i++) {
-        	playersScore[i] = new Text("Player "+ i + ":");
-        	playersBox[i] = new HBox(5, playerCards[i], playersScore[i]);
-        	playersBox[i].setAlignment(Pos.CENTER);
-        	leftVBox.getChildren().add(playersBox[i]);
+        for(int i = 1; i <= numPlayers; i++) {
+        	playersScore[i-1] = new Text("Player "+ i + ":");
+        	playersBox[i-1] = new HBox(5, playerCards[i-1], playersScore[i-1]);
+        	playersBox[i-1].setAlignment(Pos.CENTER);
+        	leftVBox.getChildren().add(playersBox[i-1]);
         }
         
         
@@ -146,10 +146,10 @@ public class BlackjackApp extends Application {
         dealerScore.setFont(Font.font("Britannic Bold", 16));
         //dealerScore.textProperty().bind(new SimpleStringProperty("Dealer: ").concat(dealer.valueProperty().asString()));
         
-        for(int i = 0; i < numPlayers; i++) {
-        	IntegerProperty score = players[i].valueProperty();
-        	playersScore[i].setFont(Font.font("Britannic Bold", 16));
-        	playersScore[i].textProperty().bind(new SimpleStringProperty("Player " + i + ": ").concat(score.asString()));
+        for(int i = 1; i <= numPlayers; i++) {
+        	IntegerProperty score = players[i-1].valueProperty();
+        	playersScore[i-1].setFont(Font.font("Britannic Bold", 16));
+        	playersScore[i-1].textProperty().bind(new SimpleStringProperty("Player " + i + ": ").concat(score.asString()));
         	score.addListener(obv -> {
         		if(score.intValue() >= 21) btnStand.fire();
         	});
@@ -163,7 +163,7 @@ public class BlackjackApp extends Application {
         });
         // INIT BUTTONS
         btnPlay.setOnAction(event -> {
-        	txtTurn.textProperty().setValue("Turn: Player 0");
+        	txtTurn.textProperty().setValue("Player 1's Turn");
         	dealerScore.setText("Dealer");
         	startNewGame();
         });
@@ -181,7 +181,8 @@ public class BlackjackApp extends Application {
         		dealerScore.setText("Dealer: " + dealer.valueProperty().getValue());
         		endGame();
         	}else{
-        			txtTurn.textProperty().setValue("Player " + turn + "'s turn");
+        			int id = turn +1;
+        			txtTurn.textProperty().setValue("Player " + id + "'s Turn");
         	}
         });
         return root;
@@ -220,8 +221,8 @@ public class BlackjackApp extends Application {
         int dealerValue = dealer.valueProperty().get();
         cards.set(0, cardshow);
         
-        for(int i =0; i < numPlayers; i++) {
-        	playerValue = players[i].valueProperty().get();
+        for(int i =1; i <= numPlayers; i++) {
+        	playerValue = players[i-1].valueProperty().get();
         	//System.out.println(playerValue);
         	if(playerValue <= 21) {      	
         		if (playerValue == 21 || dealerValue > 21 || playerValue > dealerValue) {
