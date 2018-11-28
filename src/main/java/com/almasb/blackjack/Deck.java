@@ -34,4 +34,17 @@ public class Deck {
         }
         return card;
     }
+    
+    public Card drawCardfacedown() {
+        Card card = null;
+        Card cardFlipped = null;
+        while (card == null) {
+            int index = (int)(Math.random()*cards.length);
+            card = cards[index];
+            cardFlipped = new Card(card.suit,card.rank, true);
+            cards[index] = null;
+        }
+        return cardFlipped;
+    }
+    
 }
